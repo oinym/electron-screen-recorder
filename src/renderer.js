@@ -29,9 +29,15 @@ async function getVideoSources() {
     const inputSources = await ipcRenderer.invoke('getSources')
   
     inputSources.forEach(source => {
-      const element = document.createElement("option")
+      const element = document.createElement("li")
+      const preview=document.createElement('img')
+      const text=document.createElement('span')
+        preview.src=source.thumbnail.toPNG();
+      
+      text.innerHTML =  source.name
+      element.appendChild(preview)
+      element.appendChild(text)
       element.value = source.id
-      element.innerHTML = source.name
       selectMenu.appendChild(element)
     });
   }
