@@ -1,59 +1,27 @@
-/**
- * This file will automatically be loaded by webpack and run in the "renderer" context.
- * To learn more about the differences between the "main" and the "renderer" context in
- * Electron, visit:
- *
- * https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes
- *
- * By default, Node.js integration in this file is disabled. When enabling Node.js integration
- * in a renderer process, please be aware of potential security implications. You can read
- * more about security risks here:
- *
- * https://electronjs.org/docs/tutorial/security
- *
- * To enable Node.js integration in this file, open up `main.js` and enable the `nodeIntegration`
- * flag:
- *
- * ```
- *  // Create the browser window.
- *  mainWindow = new BrowserWindow({
- *    width: 800,
- *    height: 600,
- *    webPreferences: {
- *      nodeIntegration: true
- *    }
- *  });
- * ```
- */
-
-import './index.css';
-
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
-
-import { ipcRenderer } from 'electron';
-import { writeFile } from 'fs';
-
+const {ipcRenderer}=require('electron')
+const {writeFile}=require('fs')
 let mediaRecorder;
 let recordedChunks = [];
 
 // Buttons
 const videoElement = document.querySelector('video');
 
-const startBtn = document.getElementById('startBtn');
-startBtn.onclick = e => {
-  startRecording();
-  startBtn.innerText = 'Recording';
+const recBtn = document.getElementById('recBtn');
+recBtn.onclick = e => {
+    console.log('start recording button pressed')
+    startRecording();
+  recBtn.innerText = 'Recording';
 };
 
 const stopBtn = document.getElementById('stopBtn');
 
 stopBtn.onclick = e => {
   mediaRecorder.stop();
-  startBtn.innerText = 'Start';
+  recBtn.innerText = 'Start';
 };
 
-const videoSelectBtn = document.getElementById('videoSelectBtn');
-videoSelectBtn.onclick = getVideoSources;
+// const videoSelectBtn = document.getElementById('videoSelectBtn');
+// videoSelectBtn.onclick = getVideoSources;
 
 const selectMenu = document.getElementById('selectMenu')
 
@@ -70,39 +38,43 @@ async function getVideoSources() {
 
 
   async function startRecording() {
-    const screenId = selectMenu.options[selectMenu.selectedIndex].value
+    getVideoSources();
+    if(selectMenu.options[selectMenu.selectedIndex]){
+        const screenId = selectMenu.options[selectMenu.selectedIndex].value
     
-    // AUDIO WONT WORK ON MACOS
-    const IS_MACOS = await ipcRenderer.invoke("getOperatingSystem") === 'darwin'
-    console.log(await ipcRenderer.invoke('getOperatingSystem'))
-    const audio = !IS_MACOS ? {
-      mandatory: {
-        chromeMediaSource: 'desktop'
-      }
-    } : false
-  
-    const constraints = {
-      audio,
-      video: {
-        mandatory: {
-          chromeMediaSource: 'desktop',
-          chromeMediaSourceId: screenId
-        }
-      }
-    };
-  
-    // Create a Stream
-    const stream = await navigator.mediaDevices
-      .getUserMedia(constraints);
-  
-    // Preview the source in a video element
-    videoElement.srcObject = stream;
-    await videoElement.play();
-  
-    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
-    mediaRecorder.ondataavailable = onDataAvailable;
-    mediaRecorder.onstop = stopRecording;
-    mediaRecorder.start();
+        // AUDIO WONT WORK ON MACOS
+        const IS_MACOS = await ipcRenderer.invoke("getOperatingSystem") === 'darwin'
+        console.log(await ipcRenderer.invoke('getOperatingSystem'))
+        const audio = !IS_MACOS ? {
+          mandatory: {
+            chromeMediaSource: 'desktop'
+          }
+        } : false
+      
+        const constraints = {
+          audio,
+          video: {
+            mandatory: {
+              chromeMediaSource: 'desktop',
+              chromeMediaSourceId: screenId
+            }
+          }
+        };
+      
+        // Create a Stream
+        const stream = await navigator.mediaDevices
+          .getUserMedia(constraints);
+      
+        // Preview the source in a video element
+        videoElement.srcObject = stream;
+        await videoElement.play();
+      
+        mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
+        mediaRecorder.ondataavailable = onDataAvailable;
+        mediaRecorder.onstop = stopRecording;
+        mediaRecorder.start();
+    }
+    
   }
 
 function onDataAvailable(e) {

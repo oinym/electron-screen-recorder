@@ -18,3 +18,10 @@ body {
     height: 64px;
     width: 64px;
 }
+
+.selectMenu{
+    display: grid;
+    grid-auto-columns: auto-flow / 1fr 1fr 1fr;;
+    
+}
+
