@@ -2,7 +2,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
         Arial, sans-serif;
     margin: auto;
-    max-width: 38rem;
     padding: 2rem;
 }
 
@@ -19,18 +18,49 @@ body {
     width: 64px;
 }
 
-.selectMenu{
-    display: grid;
-    grid-auto-columns: auto-flow / 1fr 1fr 1fr;
+#selectMenu{
+    display: grid;    
+    background-color: #000;
+        padding: 10px;
     margin: 10px 10px;
-    max-width: 50%;
-    list-style: none;
+    list-style: none ;
+    list-style-type: none;
+    gap:10px;
+    width: fit-content;
 }
 
-.selectMenu li{
+
+#selectMenu li{
     display: flex;
     flex-direction: column;
-    width: 1fr;
-    height:fit-content;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    color: #FFF;
+    width:min-content;
 }
 
+#selectMenu li img{
+    width: 250px;
+    aspect-ratio: auto;
+
+}
+
+
+#selectMenu li:hover{
+    border:1px solid #fff;
+}
+
+@media (min-width:900px) {
+    #selectMenu {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width:900px) {
+    #selectMenu{grid-template-columns: repeat(2,1fr);}
+}
+
+@media (max-width:600px) {
+    #selectMenu {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}
